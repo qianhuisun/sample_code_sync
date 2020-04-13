@@ -36,6 +36,15 @@ class Net(nn.Module):
         return F.softmax(x, dim = 1)
 
 
+
+if torch.cuda.is_available():
+    print("running on the cuda")
+    device = torch.device("cuda:0")
+
+else:
+    print("running on the cpu")
+    device = torch.device("cpu")
+
 training_data = np.load("training_data.npy", allow_pickle = True)
 print(len(training_data))
 
@@ -43,7 +52,7 @@ print(len(training_data))
 #plt.imshow(training_data[0][0], cmap = "gray")
 #plt.show()
 
-net = Net()
+net = Net().to(device)
 
 optimizer = optim.Adam(net.parameters(), lr = 0.001)
 # loss_function = F.nll_loss()
@@ -76,6 +85,8 @@ for epoch in range(EPOCHS):
         batch_x = train_x[i:i+BATCH_SIZE].view(-1, 1, IMG_SIZE, IMG_SIZE)
         batch_y = train_y[i:i+BATCH_SIZE]
 
+        batch_x, batch_y = batch_x.to(device), batch_y
+
         net.zero_grad()
         
         output = net(batch_x)
@@ -99,3 +110,5 @@ with torch.no_grad():
         total += 1
 
 print("Accuracy = ", round(correct / total, 3))
+
+
