@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F 
 import torch.optim as optim
-from torchvision import datasets, transforms
+#from torchvision import datasets, transforms
 from tqdm import tqdm
 import numpy as np
 import matplotlib.pyplot as plt
@@ -85,7 +85,7 @@ for epoch in range(EPOCHS):
         batch_x = train_x[i:i+BATCH_SIZE].view(-1, 1, IMG_SIZE, IMG_SIZE)
         batch_y = train_y[i:i+BATCH_SIZE]
 
-        batch_x, batch_y = batch_x.to(device), batch_y
+        batch_x, batch_y = batch_x.to(device), batch_y.to(device)
 
         net.zero_grad()
         
@@ -102,7 +102,7 @@ total = 0
 with torch.no_grad():
     for i in tqdm(range(len(test_x))):
         real_class = torch.argmax(test_y[i])
-        output = net(test_x[i].view(-1, 1, IMG_SIZE, IMG_SIZE))[0]
+        output = net(test_x[i].view(-1, 1, IMG_SIZE, IMG_SIZE).to(device))[0]
         predicted_class = torch.argmax(output)
         if predicted_class == real_class:
             correct += 1
